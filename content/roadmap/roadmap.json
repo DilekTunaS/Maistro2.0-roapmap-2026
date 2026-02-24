@@ -1,0 +1,58 @@
+{
+  "quarter": "Q2 2026",
+  "northStarGoal": "Become the default operating system for sprint visibility across leadership, product, and delivery teams.",
+  "timeline": [
+    {
+      "month": "April",
+      "title": "Operational Foundation",
+      "items": [
+        "Consolidate sprint data ingestion from all squads",
+        "Launch executive weekly bulletin automation",
+        "Publish baseline delivery health scorecard"
+      ]
+    },
+    {
+      "month": "May",
+      "title": "Decision Velocity",
+      "items": [
+        "Roll out roadmap dependency tracking",
+        "Introduce risk escalation workflows",
+        "Enable business impact tagging for milestones"
+      ]
+    },
+    {
+      "month": "June",
+      "title": "Scale & Optimization",
+      "items": [
+        "Automate quarterly roadmap review packets",
+        "Expand reporting to regional business units",
+        "Reduce status-report preparation time by 40%"
+      ]
+    }
+  ],
+  "priorities": {
+    "must": [
+      "Unified sprint health model",
+      "Executive digest reliability > 99%",
+      "Roadmap dependency ownership by every squad"
+    ],
+    "should": [
+      "Automated slide export for board updates",
+      "Cross-team milestone confidence scoring"
+    ],
+    "niceToHave": [
+      "Natural-language weekly summary generation",
+      "Scenario simulation for timeline shifts"
+    ]
+  },
+  "risksAndDependencies": [
+    "Data warehouse schema migration in April may delay reporting",
+    "Dependence on CRM event quality for impact attribution",
+    "Limited frontend capacity in final month of quarter"
+  ],
+  "expectedBusinessImpact": [
+    "Improve leadership visibility across delivery teams",
+    "Reduce cycle time for roadmap decisions",
+    "Increase forecast accuracy for quarterly commitments"
+  ]
+}
