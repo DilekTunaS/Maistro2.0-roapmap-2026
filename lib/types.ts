@@ -130,30 +130,7 @@ export type IdeaRecord = {
   createdAt: string;
 };
 
-export type AccessRequestStatus = "pending" | "approved" | "rejected";
-
-export type AccessRequestRecord = {
-  id: number;
-  name: string;
-  email: string;
-  reason: string;
-  status: AccessRequestStatus;
-  createdAt: string;
-  updatedAt: string;
-  approvedCode?: string;
-};
-
-export type AccessCodeRecord = {
-  code: string;
-  email: string;
-  active: boolean;
-  createdAt: string;
-  createdBy: string;
-};
-
 export type BacklogDatabase = {
   initiatives: InitiativeRecord[];
   ideas: IdeaRecord[];
-  accessRequests: AccessRequestRecord[];
-  accessCodes: AccessCodeRecord[];
 };

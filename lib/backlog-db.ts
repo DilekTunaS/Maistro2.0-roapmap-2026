@@ -3,13 +3,7 @@ import path from "path";
 import * as fsNative from "fs";
 import { Pool } from "pg";
 import { readFile as readXlsxFile, set_fs, SSF, utils } from "xlsx";
-import {
-  AccessCodeRecord,
-  AccessRequestRecord,
-  BacklogDatabase,
-  IdeaRecord,
-  InitiativeRecord,
-} from "@/lib/types";
+import { BacklogDatabase, IdeaRecord, InitiativeRecord } from "@/lib/types";
 
 set_fs(fsNative);
 
@@ -230,12 +224,6 @@ function normalizeDb(db: BacklogDatabase): BacklogDatabase {
   return {
     initiatives: Array.isArray(db.initiatives) ? db.initiatives : [],
     ideas: Array.isArray(db.ideas) ? db.ideas : [],
-    accessRequests: Array.isArray((db as Partial<BacklogDatabase>).accessRequests)
-      ? ((db as Partial<BacklogDatabase>).accessRequests as AccessRequestRecord[])
-      : [],
-    accessCodes: Array.isArray((db as Partial<BacklogDatabase>).accessCodes)
-      ? ((db as Partial<BacklogDatabase>).accessCodes as AccessCodeRecord[])
-      : [],
   };
 }
 
@@ -377,8 +365,6 @@ async function seedFromExcel(): Promise<BacklogDatabase> {
   return {
     initiatives,
     ideas: existing?.ideas ?? defaultIdeas(),
-    accessRequests: existing?.accessRequests ?? [],
-    accessCodes: existing?.accessCodes ?? [],
   };
 }
 
