@@ -5,6 +5,8 @@ import { getSprints } from "@/lib/content";
 export default async function HomePage() {
   const sprints = await getSprints();
   const [currentSprint] = sprints;
+  const sprintOutputVideoUrl = "";
+  const governancePdfUrl = "/uploads/genai-yonetisim-v15-20260225_115606.pdf";
 
   if (!currentSprint) {
     return (
@@ -68,6 +70,114 @@ export default async function HomePage() {
             Open Current Sprint
           </Link>
         </div>
+      </section>
+
+      <section className="overflow-hidden rounded-3xl border border-[#1f2a44] bg-gradient-to-br from-[#0a1124] via-[#141f3b] to-[#1b2647] p-5 text-white shadow-card sm:p-7">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-blue-100/80">Sprint Ciktilari</p>
+        <div className="mt-4 grid gap-5 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="space-y-4">
+            <h2 className="border-l-2 border-blue-200 pl-3 text-2xl font-semibold leading-tight sm:text-4xl">
+              E2E Build Your Agent w Maistro
+            </h2>
+            <p className="text-sm leading-7 text-blue-100/90 sm:text-base">
+              Sprintte agent olusturma ve platform akislarinin uca uca netlestirilmesi hedeflendi. Video alani hazir;
+              demo yuku geldigi anda ayni karttan oynatilabilecek.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <article className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <p className="text-sm font-semibold text-blue-100">Build output</p>
+                <p className="mt-2 text-sm text-white/90">E2E Build Your Agent w Maistro</p>
+              </article>
+              <article className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                <p className="text-sm font-semibold text-blue-100">Video stream</p>
+                <p className="mt-2 text-sm text-white/90">IsVector destekli RAG agent</p>
+              </article>
+            </div>
+          </div>
+
+          <div className="rounded-3xl border border-white/10 bg-black/30 p-3">
+            <div className="aspect-[9/16] w-full overflow-hidden rounded-2xl bg-slate-900/70">
+              {sprintOutputVideoUrl ? (
+                <video className="h-full w-full object-cover" controls preload="metadata">
+                  <source src={sprintOutputVideoUrl} />
+                </video>
+              ) : (
+                <div className="flex h-full w-full flex-col items-center justify-center gap-3 p-4 text-center">
+                  <div className="rounded-full bg-red-600 px-4 py-2 text-sm font-semibold">PLAY</div>
+                  <p className="text-sm text-blue-100">Video yakinda eklenecek</p>
+                  <p className="text-xs text-blue-100/70">IsVector destekli RAG agent</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <article className="rounded-xl2 border border-line bg-card p-5 shadow-card">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">Proje Dokumanlari</h2>
+          <ul className="mt-3 space-y-3 text-sm">
+            <li>
+              <span className="font-medium">UI: </span>
+              <a
+                href="https://www.figma.com/make/Neyklq0zPaU06WEJ5qPJ0B/Agentic-Platform-Prototyping?p=f&t=kwfIGoCNXFlBywKD-0&fullscreen=1&preview-route=%2Fmonitoring%2Fguardrails"
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                Figma - Agentic Platform Prototyping
+              </a>
+            </li>
+            <li>
+              <span className="font-medium">Mimari tasarimlar: </span>
+              <a
+                href="https://app.diagrams.net/#G1C72TworyvRaF6AY4wC0gRCjwKQcYVQwh#%7B%22pageId%22%3A%22h4GeDd_XzQrO6BEMET3O%22%7D"
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                diagrams.net architecture board
+              </a>
+            </li>
+            <li>
+              <span className="font-medium">Platform Linki: </span>
+              <a
+                href="https://genai.softtech.com.tr/v2/agents"
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                genai.softtech.com.tr/v2/agents
+              </a>
+            </li>
+            <li>
+              <span className="font-medium">AI Governance Backlog: </span>
+              <a
+                href="https://jira.isbank/confluence/pages/viewpage.action?pageId=753606555"
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                Confluence dokumani
+              </a>
+            </li>
+          </ul>
+        </article>
+
+        <article className="rounded-xl2 border border-line bg-card p-5 shadow-card">
+          <h2 className="text-sm font-semibold uppercase tracking-[0.12em] text-muted">AI Governance PDF Preview</h2>
+          <div className="mt-3 overflow-hidden rounded-lg border border-line">
+            <iframe title="AI Governance Backlog PDF" src={governancePdfUrl} className="h-[380px] w-full bg-white" />
+          </div>
+          <a
+            href={governancePdfUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-flex rounded-md border border-line px-4 py-2 text-sm hover:bg-canvas"
+          >
+            PDF yeni sekmede ac
+          </a>
+        </article>
       </section>
 
       <section className="rounded-xl2 border border-line bg-card p-6 shadow-card">
