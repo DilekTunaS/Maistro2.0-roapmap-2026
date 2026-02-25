@@ -1,6 +1,7 @@
 import { promises as fs } from "fs";
 import path from "path";
 import * as fsNative from "fs";
+import { Pool } from "pg";
 import { readFile as readXlsxFile, set_fs, SSF, utils } from "xlsx";
 import { BacklogDatabase, IdeaRecord, InitiativeRecord } from "@/lib/types";
 
@@ -8,10 +9,41 @@ set_fs(fsNative);
 
 const dbPath = path.join(process.cwd(), "content", "data", "backlog-db.json");
 const excelPath = path.join(process.cwd(), "content", "roadmap", "yolharitasi_maistro.xlsx");
+const postgresUrl = process.env.DATABASE_URL ?? process.env.POSTGRES_URL ?? "";
+const usePostgres = Boolean(postgresUrl);
 
 type ExcelRoadmapRow = Record<string, string | number | Date | undefined>;
 
 let writeQueue: Promise<void> = Promise.resolve();
+let pgPool: Pool | null = null;
+let pgReady = false;
+
+function getPgPool(): Pool {
+  if (!pgPool) {
+    const isLocal = postgresUrl.includes("localhost") || postgresUrl.includes("127.0.0.1");
+    pgPool = new Pool({
+      connectionString: postgresUrl,
+      ssl: isLocal ? undefined : { rejectUnauthorized: false },
+    });
+  }
+  return pgPool;
+}
+
+async function ensurePgTable(): Promise<void> {
+  if (!usePostgres || pgReady) {
+    return;
+  }
+
+  const pool = getPgPool();
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS backlog_state (
+      id INTEGER PRIMARY KEY,
+      payload JSONB NOT NULL,
+      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
+  pgReady = true;
+}
 
 function clampPercent(value: number): number {
   return Math.max(0, Math.min(100, Math.round(value)));
@@ -189,6 +221,16 @@ function defaultIdeas(): IdeaRecord[] {
 }
 
 async function loadExistingForMerge(): Promise<BacklogDatabase | null> {
+  if (usePostgres) {
+    await ensurePgTable();
+    const pool = getPgPool();
+    const result = await pool.query("SELECT payload FROM backlog_state WHERE id = 1 LIMIT 1");
+    if (result.rowCount && result.rows[0]?.payload) {
+      return result.rows[0].payload as BacklogDatabase;
+    }
+    return null;
+  }
+
   try {
     const raw = await fs.readFile(dbPath, "utf8");
     return JSON.parse(raw) as BacklogDatabase;
@@ -316,12 +358,43 @@ async function seedFromExcel(): Promise<BacklogDatabase> {
 }
 
 async function writeDb(db: BacklogDatabase): Promise<void> {
+  if (usePostgres) {
+    writeQueue = writeQueue.then(async () => {
+      await ensurePgTable();
+      const pool = getPgPool();
+      await pool.query(
+        `
+          INSERT INTO backlog_state (id, payload, updated_at)
+          VALUES (1, $1::jsonb, NOW())
+          ON CONFLICT (id)
+          DO UPDATE SET payload = EXCLUDED.payload, updated_at = NOW();
+        `,
+        [JSON.stringify(db)],
+      );
+    });
+    return writeQueue;
+  }
+
   await ensureDirectory();
   writeQueue = writeQueue.then(() => fs.writeFile(dbPath, JSON.stringify(db, null, 2), "utf8"));
   return writeQueue;
 }
 
 export async function readDb(): Promise<BacklogDatabase> {
+  if (usePostgres) {
+    await ensurePgTable();
+    const pool = getPgPool();
+    const result = await pool.query("SELECT payload FROM backlog_state WHERE id = 1 LIMIT 1");
+    const payload = result.rows[0]?.payload;
+    if (payload) {
+      return payload as BacklogDatabase;
+    }
+
+    const seeded = await seedFromExcel();
+    await writeDb(seeded);
+    return seeded;
+  }
+
   try {
     const raw = await fs.readFile(dbPath, "utf8");
     return JSON.parse(raw) as BacklogDatabase;
