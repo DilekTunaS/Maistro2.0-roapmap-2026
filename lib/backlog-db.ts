@@ -221,6 +221,15 @@ function defaultIdeas(): IdeaRecord[] {
 }
 
 async function loadExistingForMerge(): Promise<BacklogDatabase | null> {
+  const loadLocalFileDb = async (): Promise<BacklogDatabase | null> => {
+    try {
+      const raw = await fs.readFile(dbPath, "utf8");
+      return JSON.parse(raw) as BacklogDatabase;
+    } catch {
+      return null;
+    }
+  };
+
   if (usePostgres) {
     await ensurePgTable();
     const pool = getPgPool();
@@ -228,15 +237,10 @@ async function loadExistingForMerge(): Promise<BacklogDatabase | null> {
     if (result.rowCount && result.rows[0]?.payload) {
       return result.rows[0].payload as BacklogDatabase;
     }
-    return null;
+    return loadLocalFileDb();
   }
 
-  try {
-    const raw = await fs.readFile(dbPath, "utf8");
-    return JSON.parse(raw) as BacklogDatabase;
-  } catch {
-    return null;
-  }
+  return loadLocalFileDb();
 }
 
 async function seedFromExcel(): Promise<BacklogDatabase> {
@@ -388,6 +392,17 @@ export async function readDb(): Promise<BacklogDatabase> {
     const payload = result.rows[0]?.payload;
     if (payload) {
       return payload as BacklogDatabase;
+    }
+
+    // One-time safety migration: if local JSON already has user-edited data,
+    // copy it into Postgres instead of creating a fresh seed.
+    try {
+      const rawLocal = await fs.readFile(dbPath, "utf8");
+      const localDb = JSON.parse(rawLocal) as BacklogDatabase;
+      await writeDb(localDb);
+      return localDb;
+    } catch {
+      // continue with seed fallback
     }
 
     const seeded = await seedFromExcel();
