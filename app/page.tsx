@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { HealthBadge } from "@/components/HealthBadge";
+import { FloatingChatLauncher } from "@/components/FloatingChatLauncher";
 import { getSprints } from "@/lib/content";
 
 export default async function HomePage() {
@@ -191,6 +192,15 @@ export default async function HomePage() {
                 full-docs.pdf
               </a>
             </li>
+            <li>
+              <span className="font-medium">Tool Policy Enforcement WhiteBoard: </span>
+              <a
+                href="#"
+                className="break-all text-sky-700 underline"
+              >
+                Link bekleniyor
+              </a>
+            </li>
           </ul>
         </article>
 
@@ -220,18 +230,6 @@ export default async function HomePage() {
             Platform PDF yeni sekmede ac
           </a>
         </article>
-      </section>
-
-      <section className="rounded-xl2 border border-line bg-card p-6 shadow-card">
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Previous Sprint Highlight</p>
-        <div className="mt-3 flex items-center gap-3">
-          <h2 className="text-xl font-semibold tracking-tight">Sprint 2</h2>
-          <HealthBadge health="green" />
-        </div>
-        <p className="mt-2 text-sm text-muted">03.02.2026 - 17.02.2026</p>
-        <p className="mt-3 text-sm">
-          Hedef: Yeni AMP ve SDK v2 mimari altyapisinin tasarlanmasi; MVPnin belirlenmesi.
-        </p>
       </section>
 
       <section className="grid gap-4 lg:grid-cols-2">
@@ -279,6 +277,20 @@ export default async function HomePage() {
           </Link>
         </article>
       </section>
+
+      <section className="rounded-xl2 border border-line bg-card p-6 shadow-card">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-muted">Previous Sprint Highlight</p>
+        <div className="mt-3 flex items-center gap-3">
+          <h2 className="text-xl font-semibold tracking-tight">Sprint 2</h2>
+          <HealthBadge health="green" />
+        </div>
+        <p className="mt-2 text-sm text-muted">03.02.2026 - 17.02.2026</p>
+        <p className="mt-3 text-sm">
+          Hedef: Yeni AMP ve SDK v2 mimari altyapisinin tasarlanmasi; MVPnin belirlenmesi.
+        </p>
+      </section>
+
+      <FloatingChatLauncher />
     </div>
   );
 }
