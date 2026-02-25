@@ -195,10 +195,12 @@ export default async function HomePage() {
             <li>
               <span className="font-medium">Tool Policy Enforcement WhiteBoard: </span>
               <a
-                href="#"
+                href="https://zoom.us/wb/doc/UlO9bj_sTqmrUlXrJv_RXA"
+                target="_blank"
+                rel="noreferrer"
                 className="break-all text-sky-700 underline"
               >
-                Link bekleniyor
+                zoom.us/wb/doc/UlO9bj_sTqmrUlXrJv_RXA
               </a>
             </li>
           </ul>
