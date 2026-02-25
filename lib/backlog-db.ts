@@ -3,7 +3,13 @@ import path from "path";
 import * as fsNative from "fs";
 import { Pool } from "pg";
 import { readFile as readXlsxFile, set_fs, SSF, utils } from "xlsx";
-import { BacklogDatabase, IdeaRecord, InitiativeRecord } from "@/lib/types";
+import {
+  AccessCodeRecord,
+  AccessRequestRecord,
+  BacklogDatabase,
+  IdeaRecord,
+  InitiativeRecord,
+} from "@/lib/types";
 
 set_fs(fsNative);
 
@@ -220,11 +226,24 @@ function defaultIdeas(): IdeaRecord[] {
   ];
 }
 
+function normalizeDb(db: BacklogDatabase): BacklogDatabase {
+  return {
+    initiatives: Array.isArray(db.initiatives) ? db.initiatives : [],
+    ideas: Array.isArray(db.ideas) ? db.ideas : [],
+    accessRequests: Array.isArray((db as Partial<BacklogDatabase>).accessRequests)
+      ? ((db as Partial<BacklogDatabase>).accessRequests as AccessRequestRecord[])
+      : [],
+    accessCodes: Array.isArray((db as Partial<BacklogDatabase>).accessCodes)
+      ? ((db as Partial<BacklogDatabase>).accessCodes as AccessCodeRecord[])
+      : [],
+  };
+}
+
 async function loadExistingForMerge(): Promise<BacklogDatabase | null> {
   const loadLocalFileDb = async (): Promise<BacklogDatabase | null> => {
     try {
       const raw = await fs.readFile(dbPath, "utf8");
-      return JSON.parse(raw) as BacklogDatabase;
+      return normalizeDb(JSON.parse(raw) as BacklogDatabase);
     } catch {
       return null;
     }
@@ -235,7 +254,7 @@ async function loadExistingForMerge(): Promise<BacklogDatabase | null> {
     const pool = getPgPool();
     const result = await pool.query("SELECT payload FROM backlog_state WHERE id = 1 LIMIT 1");
     if (result.rowCount && result.rows[0]?.payload) {
-      return result.rows[0].payload as BacklogDatabase;
+      return normalizeDb(result.rows[0].payload as BacklogDatabase);
     }
     return loadLocalFileDb();
   }
@@ -358,6 +377,8 @@ async function seedFromExcel(): Promise<BacklogDatabase> {
   return {
     initiatives,
     ideas: existing?.ideas ?? defaultIdeas(),
+    accessRequests: existing?.accessRequests ?? [],
+    accessCodes: existing?.accessCodes ?? [],
   };
 }
 
@@ -391,14 +412,14 @@ export async function readDb(): Promise<BacklogDatabase> {
     const result = await pool.query("SELECT payload FROM backlog_state WHERE id = 1 LIMIT 1");
     const payload = result.rows[0]?.payload;
     if (payload) {
-      return payload as BacklogDatabase;
+      return normalizeDb(payload as BacklogDatabase);
     }
 
     // One-time safety migration: if local JSON already has user-edited data,
     // copy it into Postgres instead of creating a fresh seed.
     try {
       const rawLocal = await fs.readFile(dbPath, "utf8");
-      const localDb = JSON.parse(rawLocal) as BacklogDatabase;
+      const localDb = normalizeDb(JSON.parse(rawLocal) as BacklogDatabase);
       await writeDb(localDb);
       return localDb;
     } catch {
@@ -412,7 +433,7 @@ export async function readDb(): Promise<BacklogDatabase> {
 
   try {
     const raw = await fs.readFile(dbPath, "utf8");
-    return JSON.parse(raw) as BacklogDatabase;
+    return normalizeDb(JSON.parse(raw) as BacklogDatabase);
   } catch {
     const seeded = await seedFromExcel();
     await writeDb(seeded);
