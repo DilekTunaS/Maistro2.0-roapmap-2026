@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { updateDb } from "@/lib/backlog-db";
 
-export async function POST(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   const id = Number(params.id);
+  let delta = 1;
+
+  try {
+    const body = await request.json();
+    if (typeof body?.delta === "number" && Number.isFinite(body.delta)) {
+      delta = Math.sign(body.delta) || 1;
+    }
+  } catch {
+    // default delta = +1 for backward compatibility
+  }
 
   const next = await updateDb((db) => {
     const ideas = db.ideas.map((item) => {
@@ -11,7 +21,7 @@ export async function POST(_request: NextRequest, { params }: { params: { id: st
       }
       return {
         ...item,
-        votes: item.votes + 1,
+        votes: Math.max(0, item.votes + delta),
       };
     });
 

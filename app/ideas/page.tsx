@@ -73,8 +73,12 @@ export default function IdeasPage() {
     }
   }
 
-  async function vote(id: number) {
-    const res = await fetch(`/api/ideas/${id}/vote`, { method: "POST" });
+  async function vote(id: number, delta: 1 | -1 = 1) {
+    const res = await fetch(`/api/ideas/${id}/vote`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ delta }),
+    });
     if (res.ok) {
       const data = (await res.json()) as { item?: IdeaRecord };
       if (data.item) {
@@ -208,12 +212,20 @@ export default function IdeasPage() {
 
         <div className="flex flex-wrap items-center gap-2 sm:flex-col sm:items-end">
           <p className="text-2xl font-semibold text-slate-800">{idea.votes}</p>
-          <button
-            onClick={() => vote(idea.id)}
-            className="rounded-full border border-teal-500 px-4 py-1 text-sm font-semibold text-teal-700 hover:bg-teal-50"
-          >
-            VOTE
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => vote(idea.id, 1)}
+              className="rounded-full border border-teal-500 px-4 py-1 text-sm font-semibold text-teal-700 hover:bg-teal-50"
+            >
+              VOTE +
+            </button>
+            <button
+              onClick={() => vote(idea.id, -1)}
+              className="rounded-full border border-slate-300 px-4 py-1 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+            >
+              VOTE -
+            </button>
+          </div>
           {isEditing ? (
             <>
               <button

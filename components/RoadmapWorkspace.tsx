@@ -44,6 +44,25 @@ function targetDateSortValue(targetDate: string): number {
   return new Date(year, month, day).getTime();
 }
 
+function statusPriority(status: string): number {
+  switch (status.trim().toLowerCase()) {
+    case "in_progress":
+      return 0;
+    case "on_track":
+      return 1;
+    case "at_risk":
+      return 2;
+    case "not_started":
+      return 3;
+    case "backlogged":
+      return 4;
+    case "completed":
+      return 5;
+    default:
+      return 6;
+  }
+}
+
 function humanizeStatus(status: string): string {
   return status
     .replace(/_/g, " ")
@@ -106,6 +125,11 @@ export function RoadmapWorkspace({
     });
 
     return [...filteredItems].sort((a, b) => {
+      const statusDiff = statusPriority(a.status) - statusPriority(b.status);
+      if (statusDiff !== 0) {
+        return statusDiff;
+      }
+
       const quarterA = quarterSortValue(a.quarter);
       const quarterB = quarterSortValue(b.quarter);
       const aBacklog = quarterA >= Number.MAX_SAFE_INTEGER - 1;

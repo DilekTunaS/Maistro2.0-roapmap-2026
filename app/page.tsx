@@ -7,6 +7,7 @@ export default async function HomePage() {
   const [currentSprint] = sprints;
   const sprintOutputVideoUrl = "";
   const governancePdfUrl = "/uploads/genai-yonetisim-v15-20260225_115606.pdf";
+  const platformDocsPdfUrl = "/uploads/full-docs.pdf";
 
   if (!currentSprint) {
     return (
@@ -23,6 +24,13 @@ export default async function HomePage() {
         <div className="marquee-wrap text-sm font-medium text-amber-800">
           <div className="marquee-track">
             15.04.2026 - Product MVP Launch Workup Bulusmasi. Herkesi bekleriz.
+          </div>
+        </div>
+      </section>
+      <section className="rounded-lg border border-sky-200 bg-sky-50 p-3">
+        <div className="marquee-wrap text-sm font-medium text-sky-800">
+          <div className="marquee-track">
+            Cok yakinda: IDE BuildYourAgent Extension geliyor.
           </div>
         </div>
       </section>
@@ -140,6 +148,17 @@ export default async function HomePage() {
               </a>
             </li>
             <li>
+              <span className="font-medium">SDK Dokumantasyonu: </span>
+              <a
+                href="https://maistro-sdk-readme.kube.uatisbank/"
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                maistro-sdk-readme.kube.uatisbank
+              </a>
+            </li>
+            <li>
               <span className="font-medium">Platform Linki: </span>
               <a
                 href="https://genai.softtech.com.tr/v2/agents"
@@ -161,6 +180,17 @@ export default async function HomePage() {
                 Confluence dokumani
               </a>
             </li>
+            <li>
+              <span className="font-medium">Platform Arayuz Dokumantasyonu (PDF): </span>
+              <a
+                href={platformDocsPdfUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="break-all text-sky-700 underline"
+              >
+                full-docs.pdf
+              </a>
+            </li>
           </ul>
         </article>
 
@@ -176,6 +206,18 @@ export default async function HomePage() {
             className="mt-3 inline-flex rounded-md border border-line px-4 py-2 text-sm hover:bg-canvas"
           >
             PDF yeni sekmede ac
+          </a>
+          <h3 className="mt-5 text-sm font-semibold uppercase tracking-[0.12em] text-muted">Platform Arayuz Dokumani Preview</h3>
+          <div className="mt-3 overflow-hidden rounded-lg border border-line">
+            <iframe title="Platform Arayuz Dokumani PDF" src={platformDocsPdfUrl} className="h-[340px] w-full bg-white" />
+          </div>
+          <a
+            href={platformDocsPdfUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-3 inline-flex rounded-md border border-line px-4 py-2 text-sm hover:bg-canvas"
+          >
+            Platform PDF yeni sekmede ac
           </a>
         </article>
       </section>
